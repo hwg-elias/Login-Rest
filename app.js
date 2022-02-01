@@ -1,7 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const homeRoutes = require('./routes/userRoutes')
-const path  = require('path')
+const path = require('path')
 require('dotenv').config()
 const app = express()
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -11,7 +11,7 @@ app.use(cookieParser())
 const DB_KEY = process.env.DB_KEY
 const PORT = process.env.PORT
 
-mongoose.connect(DB_KEY,{
+mongoose.connect(DB_KEY, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 
@@ -19,13 +19,12 @@ mongoose.connect(DB_KEY,{
 
 let db = mongoose.connection
 
-db.on('error',() => {{console.log(`Can't load the Data Base !`)}})
-db.once('open', () => {console.log(`Data Base Loaded !`)})
+db.on('error', () => { { console.log(`Can't load the Data Base !`) } })
+db.once('open', () => {
+    app.use('/', homeRoutes)
+
+    app.listen(PORT || 4552, () => { console.log(`App running on PORT: ${PORT}`) })
+})
 
 app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname,'templates'))
-
-
-app.use('/', homeRoutes)
-
-app.listen(PORT || 4552, () => {console.log(`App running on PORT: ${PORT}`)})
+app.set('views', path.join(__dirname, 'templates'))
