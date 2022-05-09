@@ -1,22 +1,20 @@
 const jwt = require('jsonwebtoken')
 
-const auth = function (req, res, next) {
+const logged = function (req, res, next) {
     // { insert token to continue }
     const token = req.cookies.token
 
     if (!token) {
-        res.status(401)
-        res.render('login', { body: '' })
+        next();
     } else {
         try {
             const userVerified = jwt.verify(token, JWT_SECRET)
-            next()
+            res.render('register');
 
         } catch (error) {
-            res.status(401)
-            res.render('login', { body: '' })
+            next();
         }
     }
 }
 
-module.exports = auth
+module.exports = logged

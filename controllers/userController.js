@@ -1,3 +1,4 @@
+const registerUser = require('../models/register')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
@@ -6,9 +7,14 @@ require('dotenv').config()
 
 JWT_SECRET = process.env.JWT_SECRET
 
-// GET LOGIN
+// GET HOME
 const homePage = (req, res) => {
-    res.render('home', { body: {} })
+    res.render()
+}
+
+// GET LOGIN
+const loginPage = (req, res) => {
+    res.render('login', { body: {} })
 }
 
 // GET REGISTER
@@ -25,6 +31,9 @@ const app = (req, res)=>{
 const addUser = async (req, res) => {
     let username = req.body.username.trim()
     let password = req.body.password.trim()
+    let email = req.body.email.trim()
+    let firstname = req.body.firstname.trim()
+    let lastname = req.body.lastname.trim()
 
     let passwordVerify = password
 
@@ -42,9 +51,12 @@ const addUser = async (req, res) => {
     password = await bcrypt.hashSync(req.body.password.trim(), 10)
     
     try {
-        const response = await User.create({
+        const response = await registerUser.create({
             username,
-            password
+            password,
+            firstname,
+            lastname,
+            email
         })
         console.log(`User created successfuly. ${response}`)
         res.redirect('/')
@@ -90,4 +102,4 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = { homePage, login, registerPage, addUser, app }
+module.exports = { homePage, loginPage, login, registerPage, addUser, app }

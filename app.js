@@ -11,15 +11,11 @@ app.use(cookieParser())
 const DB_KEY = process.env.DB_KEY
 const PORT = process.env.PORT
 
-mongoose.connect(DB_KEY, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+mongoose.connect(DB_KEY)
 
-})
+const db = mongoose.connection
 
-let db = mongoose.connection
-
-db.on('error', () => { { console.log(`Can't load the Data Base !`) } })
+db.once('error', () => { console.log(`DataBase wasn't load!`) })
 db.once('open', () => {
     app.use('/', homeRoutes)
 
