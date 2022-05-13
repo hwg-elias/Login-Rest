@@ -2,6 +2,7 @@ const registerUser = require('../models/register')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
+const user = require('../models/user');
 require('dotenv').config()
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -24,7 +25,13 @@ const registerPage = (req, res) => {
 
 // GET APP
 const app = (req, res)=>{
+    user
     res.render('app')
+}
+
+// GET ERROR
+const errorPage = (req, res) => {
+    res.render('error', message)
 }
 
 // POST REGISTER
@@ -39,13 +46,13 @@ const addUser = async (req, res) => {
 
     let userFind = await User.findOne({ username: username })
     if (userFind) {
-        res.render('error', { message: `This Username already exist!` })
+        res.redirect('error', { message: `This Username already exist!` })
     }
     if (!passwordVerify) {
-        res.render('error', { message: `Invalid Username or Password.` })
+        res.redirect('error', { message: `Invalid Username or Password.` })
     }
     if (passwordVerify.length < 5) {
-        res.render('error', { message: `Password too small. Should be atleast 6 characters.` })
+        res.redirect('error', { message: `Password too small. Should be atleast 6 characters.` })
     }
 
     password = await bcrypt.hashSync(req.body.password.trim(), 10)
@@ -76,22 +83,31 @@ const login = async (req, res) => {
     let userFind = await User.find({ username })
 
     if (!userFind) {
-        res.render('error', { message: `Invalid Username or Password.`})
+        res.redirect('error', { message: `Invalid Username or Password.`})
     }
 
-    if (userFind != null) {
+    if (userFind) {
         // GETTING THE DATA INFO
-        let userFind = await User.findOne({username: username})
+        let userFinder = await User.findOne({username: username})
+        
+        console.log(userFinder)
 
-        if (!userFind){
-            res.render('error', { message: `Invalid Username or Password.`})
+        if (!userFinder){
+            res.render('/error', { message: `Invalid Username or Password.`})
         }
-        let savedUsername = userFind.username
-        let savedPassword = userFind.password
+        
+        savedUsername = userFinder.username
+        savedPassword = userFinder.password
+
 
         if (await bcrypt.compareSync(password, savedPassword)) {
             const token = jwt.sign({ username: savedUsername }, JWT_SECRET)
             res.cookie('token', token, { maxAge: 900000, httpOnly: true })
+            res.cookie('username', userFinder.username, { maxAge: 900000, httpOnly: true })
+            res.cookie('firstname', userFinder.username, { maxAge: 900000, httpOnly: true })
+            res.cookie('lastname', userFinder.username, { maxAge: 900000, httpOnly: true })
+            res.cookie('email', userFinder.username, { maxAge: 900000, httpOnly: true })
+            
             res.redirect('/app')
         } else {
             res.status(400)
@@ -102,4 +118,4 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = { homePage, loginPage, login, registerPage, addUser, app }
+module.exports = { homePage, loginPage, login, registerPage, addUser, app, errorPage }

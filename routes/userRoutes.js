@@ -9,6 +9,7 @@ router.get('/', auth, userController.homePage)
 router.get('/login', logged, userController.loginPage)
 router.get('/app', auth, userController.app)
 router.get('/register', logged, userController.registerPage)
+router.get('/error', userController.errorPage)
 
 
 // POST ROUTES
