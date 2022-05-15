@@ -10,23 +10,25 @@ JWT_SECRET = process.env.JWT_SECRET
 
 // GET HOME
 const homePage = (req, res) => {
-    res.render()
+    let username = req.cookies.username
+    let firstname = req.cookies.firstname
+    let lastname = req.cookies.lastname
+    let email = req.cookies.email
+
+    res.render('app')
 }
 
 // GET LOGIN
 const loginPage = (req, res) => {
-    res.render('login', { body: {} })
+    res.status(200)
+   res.render('login', {body: ''})
+    
 }
 
 // GET REGISTER
 const registerPage = (req, res) => {
-    res.render('register', { body: {} })
-}
-
-// GET APP
-const app = (req, res)=>{
-    user
-    res.render('app')
+    res.status(200)
+    res.render('register', { body: '' })
 }
 
 // GET ERROR
@@ -108,7 +110,8 @@ const login = async (req, res) => {
             res.cookie('lastname', userFinder.username, { maxAge: 900000, httpOnly: true })
             res.cookie('email', userFinder.username, { maxAge: 900000, httpOnly: true })
             
-            res.redirect('/app')
+            res.status(200)
+            res.redirect('/')
         } else {
             res.status(400)
             res.render('error', { message: `Invalid Username of Password.` })
@@ -118,4 +121,4 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = { homePage, loginPage, login, registerPage, addUser, app, errorPage }
+module.exports = { homePage, loginPage, login, registerPage, addUser, errorPage }

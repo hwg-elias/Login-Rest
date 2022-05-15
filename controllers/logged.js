@@ -4,15 +4,16 @@ const logged = function (req, res, next) {
     // { insert token to continue }
     const token = req.cookies.token
 
-    if (!token) {
-        next();
+    const userVerified = jwt.verify(token, JWT_SECRET)
+    if (!userVerified) {
+        next()
     } else {
         try {
             const userVerified = jwt.verify(token, JWT_SECRET)
-            res.render('register');
+            res.redirect({status: 200, body: ''},'/');
 
         } catch (error) {
-            next();
+            
         }
     }
 }
